@@ -5,6 +5,8 @@ export type BioDataSource = 'api' | 'manual' | 'calc'
 
 /** Resposta GET /api/creators/{handle} (CreatorResource) */
 export interface CreatorProfilePublic {
+  display_name: string | null
+  bio: string | null
   contact_email: string | null
   contact_whatsapp: string | null
   city: string | null

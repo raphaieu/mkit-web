@@ -2,6 +2,8 @@ import type { CreatorProfilePublic } from '~/types/creator'
 
 /** Corpo PUT /api/me/creator-profile */
 export interface CreatorProfileUpdatePayload {
+  display_name?: string | null
+  bio?: string | null
   contact_email?: string | null
   contact_whatsapp?: string | null
   city?: string | null

@@ -89,9 +89,9 @@ useHead({
         <p class="text-xs text-stone-400">
           mkit.com.br/<span class="font-medium" style="color: var(--bio-accent-600)">@{{ creator.handle }}</span>
         </p>
-        <p class="mt-1 text-[10px] tracking-wide text-stone-300">
-          powered by mkit
-        </p>
+        <a href="https://mkit.com.br" target="_blank" rel="noopener noreferrer" class="mt-1 text-[10px] tracking-wide text-stone-300">
+          <span class="underline">powered by mkit</span>
+        </a>
       </div>
     </footer>
   </div>

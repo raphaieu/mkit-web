@@ -21,6 +21,8 @@ const profileError = ref<string | null>(null)
 const profile = ref<CreatorProfilePublic | null>(null)
 
 const form = reactive({
+  display_name: '',
+  bio: '',
   contact_email: '',
   contact_whatsapp: '',
   city: '',
@@ -43,6 +45,12 @@ const links = ref<Awaited<ReturnType<typeof linksApi.list>>>([])
 const newBrand = reactive({ name: '', category: '', emoji: '✨' })
 const newLink = reactive({ title: '', description: '', url: '', emoji: '' as string })
 
+const editingBrandId = ref<number | null>(null)
+const editBrand = reactive({ name: '', category: '', emoji: '' })
+
+const editingLinkId = ref<number | null>(null)
+const editLink = reactive({ title: '', description: '', url: '', emoji: '' })
+
 const portfolioListRef = ref<{ load: () => Promise<void> } | null>(null)
 
 const inputClass =
@@ -51,6 +59,8 @@ const labelClass = 'block text-xs font-medium text-gray-500'
 
 function applyProfile(p: CreatorProfilePublic) {
   profile.value = p
+  form.display_name = p.display_name ?? ''
+  form.bio = p.bio ?? ''
   form.contact_email = p.contact_email ?? ''
   form.contact_whatsapp = p.contact_whatsapp ?? ''
   form.city = p.city ?? ''
@@ -95,6 +105,8 @@ async function saveProfile() {
   profileError.value = null
   try {
     const payload: CreatorProfileUpdatePayload = {
+      display_name: form.display_name || null,
+      bio: form.bio || null,
       contact_email: form.contact_email || null,
       contact_whatsapp: form.contact_whatsapp || null,
       city: form.city || null,
@@ -153,6 +165,33 @@ async function createPartnerBrand() {
   newBrand.emoji = '✨'
 }
 
+function startEditBrand(b: typeof partnerBrands.value[number]) {
+  editingBrandId.value = b.id
+  editBrand.name = b.name
+  editBrand.category = b.category ?? ''
+  editBrand.emoji = b.emoji ?? ''
+}
+
+async function saveEditBrand(id: number) {
+  const updated = await partnerApi.update(id, {
+    name: editBrand.name.trim(),
+    category: editBrand.category || null,
+    emoji: editBrand.emoji || null,
+  })
+  const idx = partnerBrands.value.findIndex(b => b.id === id)
+  if (idx !== -1) partnerBrands.value[idx] = updated
+  editingBrandId.value = null
+}
+
+async function moveBrand(index: number, direction: -1 | 1) {
+  const target = index + direction
+  if (target < 0 || target >= partnerBrands.value.length) return
+  const copy = [...partnerBrands.value]
+  ;[copy[index], copy[target]] = [copy[target]!, copy[index]!]
+  partnerBrands.value = copy
+  await partnerApi.reorder(copy.map(b => b.id))
+}
+
 async function deletePartnerBrand(id: number) {
   await partnerApi.remove(id)
   partnerBrands.value = partnerBrands.value.filter(b => b.id !== id)
@@ -171,6 +210,35 @@ async function createLink() {
   newLink.description = ''
   newLink.url = ''
   newLink.emoji = ''
+}
+
+function startEditLink(l: typeof links.value[number]) {
+  editingLinkId.value = l.id
+  editLink.title = l.title
+  editLink.description = l.description ?? ''
+  editLink.url = l.url
+  editLink.emoji = l.emoji ?? ''
+}
+
+async function saveEditLink(id: number) {
+  const updated = await linksApi.update(id, {
+    title: editLink.title.trim(),
+    description: editLink.description || null,
+    url: editLink.url.trim(),
+    emoji: editLink.emoji || null,
+  })
+  const idx = links.value.findIndex(l => l.id === id)
+  if (idx !== -1) links.value[idx] = updated
+  editingLinkId.value = null
+}
+
+async function moveLink(index: number, direction: -1 | 1) {
+  const target = index + direction
+  if (target < 0 || target >= links.value.length) return
+  const copy = [...links.value]
+  ;[copy[index], copy[target]] = [copy[target]!, copy[index]!]
+  links.value = copy
+  await linksApi.reorder(copy.map(l => l.id))
 }
 
 async function deleteLink(id: number) {
@@ -216,6 +284,30 @@ function onPortfolioCreated() {
         source="manual"
       >
         <form class="space-y-4" @submit.prevent="saveProfile">
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label :class="labelClass">Nome no bio site</label>
+              <input
+                v-model="form.display_name"
+                type="text"
+                :class="inputClass"
+                maxlength="255"
+                :placeholder="auth.user?.instagram?.full_name ?? 'Deixe vazio para usar o nome do Instagram'"
+              >
+              <p class="mt-1 text-xs text-gray-400">Vazio = usa o nome da conta Instagram</p>
+            </div>
+            <div>
+              <label :class="labelClass">Bio no bio site</label>
+              <textarea
+                v-model="form.bio"
+                rows="3"
+                :class="inputClass"
+                maxlength="1000"
+                :placeholder="auth.user?.instagram?.biography ?? 'Deixe vazio para usar a bio do Instagram'"
+              />
+              <p class="mt-1 text-xs text-gray-400">Vazio = usa a bio da conta Instagram</p>
+            </div>
+          </div>
           <div class="grid gap-4 md:grid-cols-2">
             <div>
               <label :class="labelClass">E-mail para propostas</label>
@@ -332,14 +424,54 @@ function onPortfolioCreated() {
       >
         <ul v-if="partnerBrands.length" class="mb-4 divide-y divide-gray-100 rounded-lg border border-gray-100">
           <li
-            v-for="b in partnerBrands"
+            v-for="(b, index) in partnerBrands"
             :key="b.id"
-            class="flex items-center justify-between gap-2 px-3 py-2 text-sm"
+            class="px-3 py-2 text-sm"
           >
-            <span><span class="mr-2">{{ b.emoji ?? '✨' }}</span> {{ b.name }} · {{ b.category ?? '—' }}</span>
-            <button type="button" class="text-red-600 hover:underline" @click="deletePartnerBrand(b.id)">
-              Remover
-            </button>
+            <!-- Edit mode -->
+            <div v-if="editingBrandId === b.id" class="flex flex-wrap items-end gap-2">
+              <input v-model="editBrand.emoji" type="text" :class="[inputClass, 'w-16']" placeholder="Emoji" maxlength="4">
+              <input v-model="editBrand.name" type="text" :class="[inputClass, 'flex-1']" placeholder="Nome *">
+              <input v-model="editBrand.category" type="text" :class="[inputClass, 'flex-1']" placeholder="Categoria">
+              <div class="flex gap-2 self-end">
+                <AppButton type="button" @click="saveEditBrand(b.id)">Salvar</AppButton>
+                <AppButton type="button" variant="secondary" @click="editingBrandId = null">Cancelar</AppButton>
+              </div>
+            </div>
+
+            <!-- Display mode -->
+            <div v-else class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-1.5">
+                <!-- Reorder arrows -->
+                <div class="flex flex-col gap-0.5">
+                  <button
+                    type="button"
+                    class="text-gray-300 hover:text-gray-600 disabled:opacity-30"
+                    :disabled="index === 0"
+                    @click="moveBrand(index, -1)"
+                  >
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 15l-6-6-6 6" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="text-gray-300 hover:text-gray-600 disabled:opacity-30"
+                    :disabled="index === partnerBrands.length - 1"
+                    @click="moveBrand(index, 1)"
+                  >
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+                </div>
+                <span><span class="mr-1">{{ b.emoji ?? '✨' }}</span>{{ b.name }}<span v-if="b.category" class="text-gray-400"> · {{ b.category }}</span></span>
+              </div>
+              <div class="flex gap-3">
+                <button type="button" class="text-blue-500 hover:underline" @click="startEditBrand(b)">Editar</button>
+                <button type="button" class="text-red-500 hover:underline" @click="deletePartnerBrand(b.id)">Remover</button>
+              </div>
+            </div>
           </li>
         </ul>
         <div class="grid gap-3 sm:grid-cols-4">
@@ -374,14 +506,59 @@ function onPortfolioCreated() {
       >
         <ul v-if="links.length" class="mb-4 divide-y divide-gray-100 rounded-lg border border-gray-100">
           <li
-            v-for="link in links"
+            v-for="(link, index) in links"
             :key="link.id"
-            class="flex items-center justify-between gap-2 px-3 py-2 text-sm"
+            class="px-3 py-2 text-sm"
           >
-            <span class="truncate">{{ link.emoji ?? '' }} {{ link.title }} — {{ link.url }}</span>
-            <button type="button" class="shrink-0 text-red-600 hover:underline" @click="deleteLink(link.id)">
-              Remover
-            </button>
+            <!-- Edit mode -->
+            <div v-if="editingLinkId === link.id" class="space-y-2">
+              <div class="grid gap-2 sm:grid-cols-2">
+                <input v-model="editLink.emoji" type="text" :class="inputClass" placeholder="Emoji">
+                <input v-model="editLink.title" type="text" :class="inputClass" placeholder="Título *">
+                <input v-model="editLink.description" type="text" :class="inputClass" placeholder="Subtítulo">
+                <input v-model="editLink.url" type="url" :class="inputClass" placeholder="URL *">
+              </div>
+              <div class="flex gap-2">
+                <AppButton type="button" @click="saveEditLink(link.id)">Salvar</AppButton>
+                <AppButton type="button" variant="secondary" @click="editingLinkId = null">Cancelar</AppButton>
+              </div>
+            </div>
+
+            <!-- Display mode -->
+            <div v-else class="flex items-center justify-between gap-2">
+              <div class="flex min-w-0 items-center gap-1.5">
+                <!-- Reorder arrows -->
+                <div class="flex shrink-0 flex-col gap-0.5">
+                  <button
+                    type="button"
+                    class="text-gray-300 hover:text-gray-600 disabled:opacity-30"
+                    :disabled="index === 0"
+                    @click="moveLink(index, -1)"
+                  >
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 15l-6-6-6 6" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="text-gray-300 hover:text-gray-600 disabled:opacity-30"
+                    :disabled="index === links.length - 1"
+                    @click="moveLink(index, 1)"
+                  >
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+                </div>
+                <span class="truncate">
+                  <span v-if="link.emoji" class="mr-1">{{ link.emoji }}</span>{{ link.title }}<span class="text-gray-400"> — {{ link.url }}</span>
+                </span>
+              </div>
+              <div class="flex shrink-0 gap-3">
+                <button type="button" class="text-blue-500 hover:underline" @click="startEditLink(link)">Editar</button>
+                <button type="button" class="text-red-500 hover:underline" @click="deleteLink(link.id)">Remover</button>
+              </div>
+            </div>
           </li>
         </ul>
         <div class="grid gap-3 md:grid-cols-2">

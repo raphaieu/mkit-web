@@ -21,7 +21,7 @@ defineProps<{
     </div>
 
     <h1 class="text-2xl font-semibold tracking-tight text-gray-900">
-      {{ creator.name }}
+      {{ creator.instagram?.full_name ?? creator.name }}
     </h1>
 
     <p

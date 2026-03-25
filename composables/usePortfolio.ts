@@ -25,6 +25,10 @@ export function usePortfolio() {
     return response.data
   }
 
+  async function reorder(ids: number[]): Promise<void> {
+    await api('/me/portfolio/reorder', { method: 'POST', body: { ids } })
+  }
+
   async function remove(id: number): Promise<void> {
     await api(`/me/portfolio/${id}`, { method: 'DELETE' })
   }
@@ -33,6 +37,7 @@ export function usePortfolio() {
     list,
     create,
     update,
+    reorder,
     remove,
   }
 }

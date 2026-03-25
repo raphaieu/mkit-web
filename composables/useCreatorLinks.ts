@@ -33,9 +33,13 @@ export function useCreatorLinks() {
     return response.data
   }
 
+  async function reorder(ids: number[]): Promise<void> {
+    await api('/me/links/reorder', { method: 'POST', body: { ids } })
+  }
+
   async function remove(id: number): Promise<void> {
     await api(`/me/links/${id}`, { method: 'DELETE' })
   }
 
-  return { list, create, update, remove }
+  return { list, create, update, reorder, remove }
 }

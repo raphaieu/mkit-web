@@ -31,9 +31,13 @@ export function usePartnerBrands() {
     return response.data
   }
 
+  async function reorder(ids: number[]): Promise<void> {
+    await api('/me/partner-brands/reorder', { method: 'POST', body: { ids } })
+  }
+
   async function remove(id: number): Promise<void> {
     await api(`/me/partner-brands/${id}`, { method: 'DELETE' })
   }
 
-  return { list, create, update, remove }
+  return { list, create, update, reorder, remove }
 }
