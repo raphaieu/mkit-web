@@ -32,64 +32,112 @@ const cards = computed(() => {
   ]
 })
 
-/* ── SVG sparkline from reach_series ── */
-const sparklinePath = computed(() => {
+const W = 280
+const H = 96
+const pad = 4
+
+const sparklinePaths = computed(() => {
   const series = perf.value?.reach_series ?? []
-  if (series.length < 2) return ''
+  if (series.length < 2) return { line: '', area: '' }
   const values = series.map(p => p.value)
   const maxV = Math.max(...values) || 1
   const minV = Math.min(...values)
   const range = maxV - minV || 1
-  const W = 280
-  const H = 60
-  const pad = 4
   const step = (W - pad * 2) / (values.length - 1)
-  return values
-    .map((v, i) => {
-      const x = pad + i * step
-      const y = pad + (1 - (v - minV) / range) * (H - pad * 2)
-      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
-    })
+  const bottom = H - pad
+
+  const points = values.map((v, i) => {
+    const x = pad + i * step
+    const y = pad + (1 - (v - minV) / range) * (bottom - pad * 2)
+    return { x, y }
+  })
+
+  const line = points
+    .map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
     .join(' ')
+
+  const area = `${line} L ${points[points.length - 1]!.x.toFixed(1)},${bottom} L ${points[0]!.x.toFixed(1)},${bottom} Z`
+
+  return { line, area }
 })
 
-const hasSparkline = computed(() => sparklinePath.value.length > 0)
+const hasSparkline = computed(() => sparklinePaths.value.line.length > 0)
+
+const gradientId = `bioReachFill-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
 </script>
 
 <template>
-  <section v-if="hasData" class="px-5 py-6">
+  <section v-if="hasData" class="mt-5 px-6">
     <div class="mx-auto max-w-md">
-      <p class="bio-section-title mb-4">Alcance & Performance</p>
-
-      <!-- Sparkline chart -->
-      <div v-if="hasSparkline" class="mb-4 rounded-xl border border-gray-200 bg-white px-4 py-3">
-        <p class="mb-2 text-[10px] font-medium uppercase tracking-wider" style="color: var(--bio-muted)">Alcance por dia</p>
-        <svg :viewBox="`0 0 280 60`" class="h-14 w-full" preserveAspectRatio="none">
-          <path :d="sparklinePath" fill="none" stroke="var(--bio-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <p class="mt-1 text-[9px]" style="color: var(--bio-muted)">
-          {{ (perf?.reach_series?.length ?? 0) }} pontos · últimos dias da janela
-        </p>
+      <div
+        v-if="hasSparkline"
+        class="mb-3 rounded-2xl border border-stone-100 bg-white p-5"
+      >
+        <div class="mb-4 flex items-baseline justify-between">
+          <span class="text-xs font-medium text-gray-500">Alcance por dia</span>
+          <span class="text-[11px] text-gray-400">Últimos 28 dias</span>
+        </div>
+        <div class="h-32 w-full">
+          <svg :viewBox="`0 0 ${W} ${H}`" class="h-full w-full" preserveAspectRatio="none">
+            <defs>
+              <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--bio-accent-400)" stop-opacity="0.35" />
+                <stop offset="100%" stop-color="var(--bio-accent-50)" stop-opacity="0.15" />
+              </linearGradient>
+            </defs>
+            <path
+              :d="sparklinePaths.area"
+              :fill="`url(#${gradientId})`"
+              class="transition-opacity"
+            />
+            <path
+              :d="sparklinePaths.line"
+              fill="none"
+              stroke="var(--bio-accent-400)"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
       </div>
 
-      <!-- 2×2 metric cards -->
-      <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-cols-2 gap-3">
         <div
           v-for="card in cards"
           :key="card.label"
-          class="rounded-xl border border-gray-200 bg-white px-3 py-4 text-center"
+          class="rounded-2xl border border-stone-100 bg-white p-4 transition-all duration-200 hover:border-[color:var(--bio-accent-200)] hover:shadow-sm"
         >
-          <svg
-            class="mx-auto mb-1.5 h-4 w-4"
-            style="color: var(--bio-accent)"
-            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-          >
-            <path :d="card.icon" />
-          </svg>
-          <span class="block text-lg font-medium" style="color: var(--bio-text)">{{ card.value }}</span>
-          <span class="mt-0.5 block text-[10px] font-medium uppercase tracking-wider" style="color: var(--bio-muted)">{{ card.label }}</span>
-          <span class="block text-[10px]" style="color: var(--bio-muted)">{{ card.sub }}</span>
+          <div class="flex items-center gap-2.5">
+            <div
+              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+              style="background: var(--bio-accent-50)"
+            >
+              <svg
+                class="h-4 w-4"
+                style="color: var(--bio-accent-600)"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path :d="card.icon" />
+              </svg>
+            </div>
+            <div class="min-w-0 text-lg font-semibold leading-tight tabular-nums text-gray-900">
+              {{ card.value }}
+            </div>
+          </div>
+          <div class="mt-2.5">
+            <div class="text-[11px] font-normal uppercase tracking-wider text-gray-400">
+              {{ card.label }}
+            </div>
+            <div class="mt-0.5 text-[11px] text-gray-300">
+              {{ card.sub }}
+            </div>
+          </div>
         </div>
       </div>
     </div>

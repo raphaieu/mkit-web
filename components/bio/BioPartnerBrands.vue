@@ -6,52 +6,31 @@ const props = defineProps<{
 }>()
 
 const brands = computed(() => props.creator.partner_brands ?? [])
-
-const trackRef = ref<HTMLElement | null>(null)
-const activeDot = ref(0)
-const totalDots = computed(() => {
-  if (!trackRef.value || brands.value.length === 0) return 1
-  return Math.max(1, Math.ceil(brands.value.length / 3))
-})
-
-function onScroll() {
-  if (!trackRef.value) return
-  const el = trackRef.value
-  const scrollableWidth = el.scrollWidth - el.clientWidth
-  if (scrollableWidth <= 0) { activeDot.value = 0; return }
-  activeDot.value = Math.round((el.scrollLeft / scrollableWidth) * (totalDots.value - 1))
-}
 </script>
 
 <template>
-  <section v-if="brands.length" class="px-5 py-6">
+  <section v-if="brands.length" class="mt-10 px-6">
     <div class="mx-auto max-w-md">
-      <p class="bio-section-title mb-4">Marcas parceiras</p>
-      <div
-        ref="trackRef"
-        class="bio-scroll-hide flex gap-2 overflow-x-auto scroll-smooth pb-1"
-        style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch"
-        @scroll="onScroll"
-      >
+      <p class="bio-section-title mb-4 tracking-[0.1em]">
+        Marcas parceiras
+      </p>
+      <div class="grid grid-cols-3 gap-3">
         <div
           v-for="b in brands"
           :key="b.id"
-          class="flex w-[100px] shrink-0 flex-col items-center rounded-xl border border-gray-200 bg-white p-3.5 text-center"
-          style="scroll-snap-align: start"
+          class="flex flex-col items-center rounded-2xl border border-stone-100 bg-white px-3 py-5 text-center transition-all duration-200 hover:border-[color:var(--bio-accent-200)] hover:shadow-sm"
         >
-          <span class="text-2xl" aria-hidden="true">{{ b.emoji ?? '✨' }}</span>
-          <span class="mt-2 text-[10px] font-medium leading-tight" style="color: var(--bio-text)">{{ b.name }}</span>
-          <span v-if="b.category" class="mt-1 text-[9px]" style="color: var(--bio-muted)">{{ b.category }}</span>
+          <span v-if="b.emoji" class="mb-3 text-2xl leading-none" aria-hidden="true">{{ b.emoji }}</span>
+          <div
+            v-else
+            class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-stone-100 text-sm font-semibold text-stone-500"
+            aria-hidden="true"
+          >
+            {{ b.name.charAt(0).toUpperCase() }}
+          </div>
+          <span class="text-xs font-medium text-gray-900">{{ b.name }}</span>
+          <span v-if="b.category" class="mt-0.5 text-[10px] text-gray-400">{{ b.category }}</span>
         </div>
-      </div>
-      <div v-if="totalDots > 1" class="mt-3 flex items-center justify-center gap-1.5">
-        <span
-          v-for="i in totalDots"
-          :key="i"
-          class="block h-1 rounded-full transition-all duration-200"
-          :class="activeDot === i - 1 ? 'w-3.5' : 'w-1'"
-          :style="{ background: activeDot === i - 1 ? 'var(--bio-accent)' : '#ddd' }"
-        />
       </div>
     </div>
   </section>

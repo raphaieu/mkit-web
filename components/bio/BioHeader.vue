@@ -7,59 +7,51 @@ defineProps<{
 </script>
 
 <template>
-  <header class="px-5 pb-8 pt-10 md:pt-14">
-    <div class="mx-auto max-w-md">
-      <!-- avatar + info row -->
-      <div class="flex gap-4">
-        <UiAppAvatar
-          :src="creator.instagram?.profile_picture_url"
-          :alt="creator.name"
-          size="xl"
-          class="relative h-20 w-20 shrink-0 rounded-full ring-2 ring-(--bio-accent) md:h-24 md:w-24"
-        />
-
-        <div class="min-w-0 flex-1 pt-1 text-left">
-          <h1
-            class="text-xl font-medium leading-tight md:text-2xl"
-            style="color: var(--bio-text)"
-          >
-            {{ creator.name }}
-          </h1>
-
-          <p
-            v-if="creator.instagram?.username || creator.profile?.city"
-            class="mt-1 text-[13px]"
-            style="color: var(--bio-muted)"
-          >
-            <span v-if="creator.instagram?.username">@{{ creator.instagram.username }}</span>
-            <span v-if="creator.instagram?.username && creator.profile?.city"> · </span>
-            <span v-if="creator.profile?.city">{{ creator.profile.city }}</span>
-          </p>
-
-          <div
-            v-if="creator.profile?.badges?.length"
-            class="mt-2.5 flex flex-wrap gap-1.5"
-          >
-            <span
-              v-for="badge in creator.profile.badges"
-              :key="badge"
-              class="rounded-full px-2.5 py-0.5 text-[10px] font-medium tracking-wide"
-              style="background: var(--bio-accent); color: #ffffff"
-            >
-              {{ badge }}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- bio text -->
-      <p
-        v-if="creator.instagram?.biography"
-        class="mt-5 text-[13px] leading-relaxed"
-        style="color: var(--bio-sub)"
-      >
-        {{ creator.instagram.biography }}
-      </p>
+  <header class="flex flex-col items-center px-6 pb-6 pt-8 text-center md:pt-10">
+    <div
+      class="relative mb-4 rounded-full ring-2 ring-offset-2 ring-offset-stone-50"
+      style="--tw-ring-color: var(--bio-accent-200)"
+    >
+      <UiAppAvatar
+        :src="creator.instagram?.profile_picture_url"
+        :alt="creator.name"
+        size="xl"
+        class="!h-24 !w-24 shrink-0 md:!h-28 md:!w-28"
+      />
     </div>
+
+    <h1 class="text-2xl font-semibold tracking-tight text-gray-900">
+      {{ creator.name }}
+    </h1>
+
+    <p
+      v-if="creator.instagram?.username || creator.profile?.city"
+      class="mt-1 text-sm text-gray-400"
+    >
+      <span v-if="creator.instagram?.username">@{{ creator.instagram.username }}</span>
+      <span v-if="creator.instagram?.username && creator.profile?.city"> · </span>
+      <span v-if="creator.profile?.city">{{ creator.profile.city }}</span>
+    </p>
+
+    <div
+      v-if="creator.profile?.badges?.length"
+      class="mt-3 flex flex-wrap justify-center gap-2"
+    >
+      <span
+        v-for="badge in creator.profile.badges"
+        :key="badge"
+        class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium"
+        style="background: var(--bio-accent-50); color: var(--bio-accent-700); border-color: var(--bio-accent-200)"
+      >
+        {{ badge }}
+      </span>
+    </div>
+
+    <p
+      v-if="creator.instagram?.biography"
+      class="mt-4 max-w-xs text-sm leading-relaxed text-gray-600"
+    >
+      {{ creator.instagram.biography }}
+    </p>
   </header>
 </template>

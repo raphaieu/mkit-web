@@ -1,59 +1,118 @@
 /* ═══════════════════════════════════════════════════════════════
-   Bio site público — Minimal Premium Theme
-   Off-white · Teal accent · DM Sans · Generous whitespace
+   Bio site público — Premium Theme System
+   CSS variables per theme (accent scale 50–950) · DM Sans
    ═══════════════════════════════════════════════════════════════ */
 
 .bio-page {
   font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
-  --bio-bg: #FAFAF8;
+  background-color: var(--bio-bg);
+  background-image: var(--bio-gradient);
+  background-repeat: no-repeat;
+  background-size: 100% min(420px, 50vh);
+  --bio-bg: #fafaf9;
   --bio-surface: #ffffff;
-  --bio-surface-2: #F5F5F2;
-  --bio-border: #e5e5e0;
-  --bio-text: #1a1a1e;
-  --bio-muted: #9a9a98;
-  --bio-sub: #555555;
-  --bio-accent: #8B6914;
-  --bio-accent-soft: rgba(139, 105, 20, 0.08);
-  --bio-glow: rgba(139, 105, 20, 0.15);
-  --bio-cta-bg: #1a1a2e;
+  --bio-surface-2: #f5f5f4;
+  --bio-border: #e7e5e4;
+  --bio-border-subtle: #f5f5f4;
+  --bio-text: #171717;
+  --bio-muted: #a3a3a3;
+  --bio-sub: #525252;
+
+  /* Gold (default) — ouro */
+  --bio-accent-50: #fffbeb;
+  --bio-accent-100: #fef3c7;
+  --bio-accent-200: #fde68a;
+  --bio-accent-300: #fcd34d;
+  --bio-accent-400: #fbbf24;
+  --bio-accent-500: #f59e0b;
+  --bio-accent-600: #d97706;
+  --bio-accent-700: #b45309;
+  --bio-accent-800: #92400e;
+  --bio-accent-900: #78350f;
+  --bio-accent-950: #451a03;
+
+  --bio-accent: var(--bio-accent-500);
+  --bio-accent-soft: color-mix(in srgb, var(--bio-accent-500) 8%, transparent);
+  --bio-glow: color-mix(in srgb, var(--bio-accent-500) 15%, transparent);
+  --bio-cta-bg: var(--bio-accent-900);
   --bio-cta-text: #ffffff;
+  --bio-cta-hover: var(--bio-accent-950);
   --bio-fem: #c4507a;
   --bio-mas: #2d7ab8;
-  --bio-gradient: none;
+  --bio-gradient: radial-gradient(ellipse 120% 80% at 50% 0%, var(--bio-accent-50) 0%, transparent 55%);
 }
 
 /* ─── ROSE ─────────────────────────────────────────────────── */
 .bio-theme--rose.bio-page {
-  --bio-accent: #9b3054;
-  --bio-accent-soft: rgba(155, 48, 84, 0.08);
-  --bio-glow: rgba(155, 48, 84, 0.15);
-  --bio-cta-bg: #2e1a24;
-  --bio-fem: #9b3054;
+  --bio-accent-50: #fdf2f8;
+  --bio-accent-100: #fce7f3;
+  --bio-accent-200: #fbcfe8;
+  --bio-accent-300: #f9a8d4;
+  --bio-accent-400: #f472b6;
+  --bio-accent-500: #ec4899;
+  --bio-accent-600: #db2777;
+  --bio-accent-700: #be185d;
+  --bio-accent-800: #9d174d;
+  --bio-accent-900: #831843;
+  --bio-accent-950: #500724;
+
+  --bio-accent: var(--bio-accent-500);
+  --bio-accent-soft: color-mix(in srgb, var(--bio-accent-500) 8%, transparent);
+  --bio-glow: color-mix(in srgb, var(--bio-accent-500) 15%, transparent);
+  --bio-cta-bg: var(--bio-accent-900);
+  --bio-cta-hover: var(--bio-accent-950);
+  --bio-fem: #be185d;
 }
 
 /* ─── OCEAN ────────────────────────────────────────────────── */
 .bio-theme--ocean.bio-page {
-  --bio-accent: #1a5fa0;
-  --bio-accent-soft: rgba(26, 95, 160, 0.08);
-  --bio-glow: rgba(26, 95, 160, 0.15);
-  --bio-cta-bg: #141e30;
-  --bio-mas: #1a5fa0;
+  --bio-accent-50: #eff6ff;
+  --bio-accent-100: #dbeafe;
+  --bio-accent-200: #bfdbfe;
+  --bio-accent-300: #93c5fd;
+  --bio-accent-400: #60a5fa;
+  --bio-accent-500: #3b82f6;
+  --bio-accent-600: #2563eb;
+  --bio-accent-700: #1d4ed8;
+  --bio-accent-800: #1e40af;
+  --bio-accent-900: #1e3a8a;
+  --bio-accent-950: #172554;
+
+  --bio-accent: var(--bio-accent-500);
+  --bio-accent-soft: color-mix(in srgb, var(--bio-accent-500) 8%, transparent);
+  --bio-glow: color-mix(in srgb, var(--bio-accent-500) 15%, transparent);
+  --bio-cta-bg: var(--bio-accent-900);
+  --bio-cta-hover: var(--bio-accent-950);
+  --bio-mas: #2563eb;
 }
 
 /* ─── SAGE ─────────────────────────────────────────────────── */
 .bio-theme--sage.bio-page {
-  --bio-accent: #0F6E56;
-  --bio-accent-soft: rgba(15, 110, 86, 0.08);
-  --bio-glow: rgba(15, 110, 86, 0.15);
-  --bio-cta-bg: #0e2a20;
+  --bio-accent-50: #f0fdf4;
+  --bio-accent-100: #dcfce7;
+  --bio-accent-200: #bbf7d0;
+  --bio-accent-300: #86efac;
+  --bio-accent-400: #4ade80;
+  --bio-accent-500: #22c55e;
+  --bio-accent-600: #16a34a;
+  --bio-accent-700: #15803d;
+  --bio-accent-800: #166534;
+  --bio-accent-900: #14532d;
+  --bio-accent-950: #052e16;
+
+  --bio-accent: var(--bio-accent-500);
+  --bio-accent-soft: color-mix(in srgb, var(--bio-accent-500) 8%, transparent);
+  --bio-glow: color-mix(in srgb, var(--bio-accent-500) 15%, transparent);
+  --bio-cta-bg: var(--bio-accent-900);
+  --bio-cta-hover: var(--bio-accent-950);
 }
 
 /* ─── Section title — subtle uppercase label ──────────────── */
 .bio-section-title {
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--bio-muted);
 }
@@ -131,4 +190,13 @@
 
 .bio-scroll-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* ─── CTA primário (email) — hover só via CSS ───────────────── */
+.bio-cta-primary {
+  background: var(--bio-accent-900);
+}
+
+.bio-cta-primary:hover {
+  background: var(--bio-cta-hover);
 }

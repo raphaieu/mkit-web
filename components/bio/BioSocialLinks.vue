@@ -34,9 +34,11 @@ const entries = computed((): Entry[] => {
 </script>
 
 <template>
-  <section v-if="entries.length" class="px-5 py-6">
-    <div class="mx-auto max-w-md">
-      <p class="bio-section-title mb-4 text-center">Redes sociais</p>
+  <section v-if="entries.length" class="mt-10 px-6 pb-2">
+    <div class="mx-auto max-w-md text-center">
+      <p class="mb-4 text-[11px] font-medium uppercase tracking-[0.1em] text-gray-300">
+        Redes sociais
+      </p>
       <div class="flex flex-wrap justify-center gap-3">
         <a
           v-for="e in entries"
@@ -44,10 +46,10 @@ const entries = computed((): Entry[] => {
           :href="e.url"
           target="_blank"
           rel="noopener noreferrer"
-          class="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white transition-all duration-200 hover:border-gray-300 hover:shadow-sm"
+          class="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200/90 text-gray-400 transition-all duration-200 hover:border-[color:var(--bio-accent-200)] hover:bg-[color:var(--bio-accent-50)] hover:text-[color:var(--bio-accent-600)]"
           :title="e.label"
         >
-          <svg class="h-[17px] w-[17px]" style="color: var(--bio-sub)" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <svg class="h-4 w-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
             <path :d="e.icon" />
           </svg>
           <span class="sr-only">{{ e.label }}</span>

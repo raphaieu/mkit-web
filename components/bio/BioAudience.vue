@@ -27,7 +27,8 @@ function parseAgeRows(genderAge: Record<string, number> | null | undefined) {
 
 function parseGender(genderAge: Record<string, number> | null | undefined) {
   if (!genderAge || Object.keys(genderAge).length === 0) return null
-  let fem = 0; let mas = 0
+  let fem = 0
+  let mas = 0
   for (const [key, val] of Object.entries(genderAge)) {
     const g = key.split('_')[1]
     if (g === 'F') fem += val
@@ -63,63 +64,111 @@ const hasSubData = computed(() => ageRows.value.length > 0 || gender.value != nu
 </script>
 
 <template>
-  <section v-if="hasData && hasSubData" class="px-5 py-6">
+  <section v-if="hasData && hasSubData" class="mt-10 px-6">
     <div class="mx-auto max-w-md">
-      <p class="bio-section-title mb-4">Audiência</p>
+      <p class="bio-section-title mb-4 tracking-[0.1em]">
+        Audiência
+      </p>
 
-      <div class="grid grid-cols-2 gap-2">
-        <!-- Age -->
-        <div v-if="ageRows.length" class="rounded-xl border border-gray-200 bg-white p-4">
-          <p class="mb-3 text-[10px] font-medium uppercase tracking-wider" style="color: var(--bio-muted)">Faixa etária</p>
-          <div v-for="row in ageRows" :key="row.label" class="mb-1.5 flex items-center gap-1.5 last:mb-0">
-            <span class="w-9 shrink-0 text-[11px]" style="color: var(--bio-sub)">{{ row.label }}</span>
-            <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100">
-              <div class="h-full rounded-full transition-all duration-500" style="background: var(--bio-accent)" :style="{ width: `${row.barWidth}%` }" />
+      <div
+        class="grid gap-3"
+        :class="ageRows.length && cities.length ? 'grid-cols-2' : 'grid-cols-1'"
+      >
+        <div v-if="ageRows.length" class="rounded-2xl border border-stone-100 bg-white p-5">
+          <p class="mb-4 text-xs font-medium text-gray-500">
+            Faixa etária
+          </p>
+          <div v-for="row in ageRows" :key="row.label" class="mb-2.5 flex items-center gap-3 last:mb-0">
+            <span class="w-12 shrink-0 text-right text-xs tabular-nums text-gray-500">{{ row.label }}</span>
+            <div class="h-2 flex-1 overflow-hidden rounded-full bg-stone-100">
+              <div
+                class="h-full rounded-full transition-all duration-500"
+                style="background: var(--bio-accent-400)"
+                :style="{ width: `${row.barWidth}%` }"
+              />
             </div>
-            <span class="w-10 shrink-0 text-right text-[10px]" style="color: var(--bio-muted)">{{ row.pct }}%</span>
+            <span class="w-10 shrink-0 text-right text-xs font-medium tabular-nums text-gray-700">{{ row.pct }}%</span>
           </div>
         </div>
 
-        <!-- Top Cities -->
-        <div v-if="cities.length" class="rounded-xl border border-gray-200 bg-white p-4">
-          <p class="mb-3 text-[10px] font-medium uppercase tracking-wider" style="color: var(--bio-muted)">Top cidades</p>
-          <div v-for="city in cities" :key="city.name" class="mb-1.5 flex items-center gap-1.5 last:mb-0">
-            <svg class="h-3 w-3 shrink-0" :style="{ color: city.isTop ? 'var(--bio-accent)' : 'var(--bio-muted)' }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
+        <div v-if="cities.length" class="rounded-2xl border border-stone-100 bg-white p-5">
+          <p class="mb-4 text-xs font-medium text-gray-500">
+            Top cidades
+          </p>
+          <div v-for="city in cities" :key="city.name" class="mb-2.5 flex items-center gap-2 last:mb-0">
+            <svg
+              class="h-3 w-3 shrink-0"
+              :style="{ color: city.isTop ? 'var(--bio-accent-500)' : 'var(--bio-muted)' }"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
             </svg>
             <span
-              class="flex-1 truncate text-[11px]"
-              :class="city.isTop ? 'font-medium' : ''"
-              :style="{ color: city.isTop ? 'var(--bio-text)' : 'var(--bio-sub)' }"
+              class="min-w-0 flex-1 truncate text-xs"
+              :class="city.isTop ? 'font-medium text-gray-900' : 'text-gray-600'"
             >{{ city.name }}</span>
             <span
-              class="shrink-0 text-[10px]"
-              :class="city.isTop ? 'font-medium' : ''"
-              :style="{ color: city.isTop ? 'var(--bio-accent)' : 'var(--bio-muted)' }"
+              class="shrink-0 text-xs tabular-nums"
+              :class="city.isTop ? 'font-medium text-gray-900' : 'text-gray-500'"
             >{{ city.pct }}%</span>
           </div>
         </div>
       </div>
 
-      <!-- Gender donut -->
-      <div v-if="gender" class="mt-2 rounded-xl border border-gray-200 bg-white p-4">
-        <p class="mb-3 text-[10px] font-medium uppercase tracking-wider" style="color: var(--bio-muted)">Gênero</p>
-        <div class="flex items-center gap-5">
+      <div v-if="gender" class="mt-3 rounded-2xl border border-stone-100 bg-white p-5">
+        <p class="mb-4 text-xs font-medium text-gray-500">
+          Gênero
+        </p>
+        <div class="flex items-center gap-6">
           <svg width="64" height="64" viewBox="0 0 72 72" class="shrink-0">
-            <circle cx="36" cy="36" r="24" fill="none" stroke="#f0f0ed" stroke-width="10" />
-            <circle cx="36" cy="36" r="24" fill="none" stroke="var(--bio-fem)" stroke-width="10" :stroke-dasharray="`${gender.femDash} ${150.8 - gender.femDash}`" stroke-dashoffset="0" transform="rotate(-90 36 36)" class="transition-all duration-700" />
-            <circle cx="36" cy="36" r="24" fill="none" stroke="var(--bio-mas)" stroke-width="10" :stroke-dasharray="`${gender.masDash} ${150.8 - gender.masDash}`" :stroke-dashoffset="gender.masOffset" transform="rotate(-90 36 36)" class="transition-all duration-700" />
+            <circle cx="36" cy="36" r="24" fill="none" stroke="#e7e5e4" stroke-width="10" />
+            <circle
+              cx="36"
+              cy="36"
+              r="24"
+              fill="none"
+              stroke="var(--bio-accent-400)"
+              stroke-width="10"
+              :stroke-dasharray="`${gender.femDash} ${150.8 - gender.femDash}`"
+              stroke-dashoffset="0"
+              stroke-linecap="round"
+              transform="rotate(-90 36 36)"
+              class="transition-all duration-700"
+            />
+            <circle
+              cx="36"
+              cy="36"
+              r="24"
+              fill="none"
+              stroke="#d6d3d1"
+              stroke-width="10"
+              :stroke-dasharray="`${gender.masDash} ${150.8 - gender.masDash}`"
+              :stroke-dashoffset="gender.masOffset"
+              stroke-linecap="round"
+              transform="rotate(-90 36 36)"
+              class="transition-all duration-700"
+            />
           </svg>
-          <div class="flex-1 space-y-2.5">
-            <div class="flex items-center gap-2">
-              <span class="h-2 w-2 shrink-0 rounded-full" style="background: var(--bio-fem)" />
-              <span class="flex-1 text-[11px]" style="color: var(--bio-sub)">Feminino</span>
-              <span class="text-sm font-medium" style="color: var(--bio-text)">{{ gender.femPct }}%</span>
+          <div class="min-w-0 flex-1 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 shrink-0 rounded-full" style="background: var(--bio-accent-400)" />
+                <span class="text-sm text-gray-600">Feminino</span>
+              </div>
+              <span class="text-sm font-medium tabular-nums text-gray-900">{{ gender.femPct }}%</span>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="h-2 w-2 shrink-0 rounded-full" style="background: var(--bio-mas)" />
-              <span class="flex-1 text-[11px]" style="color: var(--bio-sub)">Masculino</span>
-              <span class="text-sm font-medium" style="color: var(--bio-text)">{{ gender.masPct }}%</span>
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 shrink-0 rounded-full bg-stone-300" />
+                <span class="text-sm text-gray-600">Masculino</span>
+              </div>
+              <span class="text-sm font-medium tabular-nums text-gray-900">{{ gender.masPct }}%</span>
             </div>
           </div>
         </div>
