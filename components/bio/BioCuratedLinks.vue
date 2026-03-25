@@ -1,0 +1,37 @@
+<script setup lang="ts">
+import type { Creator } from '~/types/creator'
+
+defineProps<{
+  creator: Creator
+}>()
+</script>
+
+<template>
+  <section v-if="creator.links?.length" class="px-5 py-6">
+    <div class="mx-auto max-w-md space-y-2">
+      <p class="bio-section-title mb-3">Links</p>
+      <a
+        v-for="link in creator.links"
+        :key="link.id"
+        :href="link.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3.5 transition-all duration-200 hover:border-gray-300 hover:shadow-sm active:scale-[0.99]"
+        style="color: var(--bio-text)"
+      >
+        <span v-if="link.emoji" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-50 text-base" aria-hidden="true">{{ link.emoji }}</span>
+        <span v-else class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-50">
+          <svg class="h-4 w-4" style="color: var(--bio-accent)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          </svg>
+        </span>
+        <span class="min-w-0 flex-1 text-left">
+          <span class="block text-[13px] font-medium">{{ link.title }}</span>
+          <span v-if="link.description" class="mt-0.5 block text-[11px]" style="color: var(--bio-muted)">{{ link.description }}</span>
+        </span>
+        <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5" style="color: var(--bio-muted)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+      </a>
+    </div>
+  </section>
+</template>

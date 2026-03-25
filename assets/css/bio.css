@@ -1,0 +1,134 @@
+/* ═══════════════════════════════════════════════════════════════
+   Bio site público — Minimal Premium Theme
+   Off-white · Teal accent · DM Sans · Generous whitespace
+   ═══════════════════════════════════════════════════════════════ */
+
+.bio-page {
+  font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  --bio-bg: #FAFAF8;
+  --bio-surface: #ffffff;
+  --bio-surface-2: #F5F5F2;
+  --bio-border: #e5e5e0;
+  --bio-text: #1a1a1e;
+  --bio-muted: #9a9a98;
+  --bio-sub: #555555;
+  --bio-accent: #8B6914;
+  --bio-accent-soft: rgba(139, 105, 20, 0.08);
+  --bio-glow: rgba(139, 105, 20, 0.15);
+  --bio-cta-bg: #1a1a2e;
+  --bio-cta-text: #ffffff;
+  --bio-fem: #c4507a;
+  --bio-mas: #2d7ab8;
+  --bio-gradient: none;
+}
+
+/* ─── ROSE ─────────────────────────────────────────────────── */
+.bio-theme--rose.bio-page {
+  --bio-accent: #9b3054;
+  --bio-accent-soft: rgba(155, 48, 84, 0.08);
+  --bio-glow: rgba(155, 48, 84, 0.15);
+  --bio-cta-bg: #2e1a24;
+  --bio-fem: #9b3054;
+}
+
+/* ─── OCEAN ────────────────────────────────────────────────── */
+.bio-theme--ocean.bio-page {
+  --bio-accent: #1a5fa0;
+  --bio-accent-soft: rgba(26, 95, 160, 0.08);
+  --bio-glow: rgba(26, 95, 160, 0.15);
+  --bio-cta-bg: #141e30;
+  --bio-mas: #1a5fa0;
+}
+
+/* ─── SAGE ─────────────────────────────────────────────────── */
+.bio-theme--sage.bio-page {
+  --bio-accent: #0F6E56;
+  --bio-accent-soft: rgba(15, 110, 86, 0.08);
+  --bio-glow: rgba(15, 110, 86, 0.15);
+  --bio-cta-bg: #0e2a20;
+}
+
+/* ─── Section title — subtle uppercase label ──────────────── */
+.bio-section-title {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bio-muted);
+}
+
+/* ─── ANIMATIONS ───────────────────────────────────────────── */
+@keyframes bioFadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bio-animate-in {
+  animation: bioFadeSlideUp 0.45s ease-out both;
+}
+
+.bio-animate-in:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.bio-animate-in:nth-child(2) {
+  animation-delay: 0.05s;
+}
+
+.bio-animate-in:nth-child(3) {
+  animation-delay: 0.10s;
+}
+
+.bio-animate-in:nth-child(4) {
+  animation-delay: 0.15s;
+}
+
+.bio-animate-in:nth-child(5) {
+  animation-delay: 0.20s;
+}
+
+.bio-animate-in:nth-child(6) {
+  animation-delay: 0.25s;
+}
+
+.bio-animate-in:nth-child(7) {
+  animation-delay: 0.30s;
+}
+
+.bio-animate-in:nth-child(8) {
+  animation-delay: 0.35s;
+}
+
+.bio-animate-in:nth-child(9) {
+  animation-delay: 0.40s;
+}
+
+.bio-animate-in:nth-child(10) {
+  animation-delay: 0.45s;
+}
+
+.bio-animate-in:nth-child(11) {
+  animation-delay: 0.50s;
+}
+
+.bio-animate-in:nth-child(12) {
+  animation-delay: 0.55s;
+}
+
+/* ─── Scrollbar hide ───────────────────────────────────────── */
+.bio-scroll-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.bio-scroll-hide::-webkit-scrollbar {
+  display: none;
+}
