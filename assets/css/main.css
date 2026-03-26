@@ -2,7 +2,8 @@
 @import "./bio.css";
 
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'DM Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
 
   --color-brand-50: oklch(97% 0.01 250);
   --color-brand-100: oklch(94% 0.03 250);
@@ -16,3 +17,31 @@
   --color-brand-900: oklch(28% 0.1 250);
   --color-brand-950: oklch(18% 0.06 250);
 }
+
+/* ===== LANDING DESIGN TOKENS ===== */
+:root {
+  --ld-bg: #fafaf7;
+  --ld-text: #1a1a1a;
+  --ld-text-secondary: #6b6b6b;
+  --ld-text-tertiary: #a0a0a0;
+  --ld-accent: #c2445a;
+  --ld-accent-light: #fce8ed;
+  --ld-accent-dark: #7f1d34;
+  --ld-surface: #ffffff;
+  --ld-border: rgba(0,0,0,0.06);
+}
+
+/* ===== SCROLL REVEAL ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
