@@ -42,6 +42,8 @@ onMounted(() => {
         <NuxtLink to="/termos">Termos de Uso</NuxtLink>
         &nbsp;&middot;&nbsp;
         <NuxtLink to="/privacidade">Política de Privacidade</NuxtLink>
+        &nbsp;&middot;&nbsp;
+        <NuxtLink to="/exclusao-de-dados">Exclusão de Dados</NuxtLink>
       </p>
     </footer>
   </div>
