@@ -43,7 +43,7 @@ onMounted(() => {
         &nbsp;&middot;&nbsp;
         <NuxtLink to="/privacidade">Política de Privacidade</NuxtLink>
         &nbsp;&middot;&nbsp;
-        <NuxtLink to="/exclusao-de-dados">Exclusão de Dados</NuxtLink>
+        <NuxtLink to="/exclusao">Exclusão de Dados</NuxtLink>
       </p>
     </footer>
   </div>
