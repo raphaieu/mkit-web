@@ -150,6 +150,45 @@ npm run build
 npm run preview
 ```
 
+## Deploy com Docker / Coolify
+
+O frontend roda em SSR com Node (`nuxt build` + `node .output/server/index.mjs`).
+
+### 1) Variáveis de ambiente
+
+```env
+NUXT_PUBLIC_API_BASE=https://api.mkit.com.br
+NUXT_PUBLIC_APP_URL=https://mkit.com.br
+WEB_PORT=3000
+```
+
+> As variáveis `NUXT_PUBLIC_*` são usadas no **build** e no **runtime**. Altere-as no Coolify antes do deploy para que o bundle seja gerado com os valores corretos.
+
+### 2) Subir localmente (teste)
+
+```bash
+docker compose up -d --build
+```
+
+App disponível em `http://localhost:3000`.
+
+### 3) Configurar no Coolify
+
+1. Crie um novo recurso **Docker Compose** apontando para este repositório.
+2. Defina o domínio `mkit.com.br` no serviço **`web`**.
+3. Configure `NUXT_PUBLIC_API_BASE` e `NUXT_PUBLIC_APP_URL`.
+4. Faça o deploy.
+
+### 4) Comandos úteis
+
+```bash
+# Logs
+docker compose logs -f web
+
+# Rebuild forçado
+docker compose up -d --build --force-recreate
+```
+
 ## Scripts disponíveis
 
 - `npm run dev` — inicia ambiente de desenvolvimento
