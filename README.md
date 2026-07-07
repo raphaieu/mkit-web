@@ -159,8 +159,9 @@ O frontend roda em SSR com Node (`nuxt build` + `node .output/server/index.mjs`)
 ```env
 NUXT_PUBLIC_API_BASE=https://api.mkit.com.br
 NUXT_PUBLIC_APP_URL=https://mkit.com.br
-WEB_PORT=3000
 ```
+
+> No Coolify, **não** exponha portas no host (`ports:`). O proxy do Coolify roteia pelo domínio via rede interna do Docker. O compose já usa `expose` para isso.
 
 > As variáveis `NUXT_PUBLIC_*` são usadas no **build** e no **runtime**. Altere-as no Coolify antes do deploy para que o bundle seja gerado com os valores corretos.
 
@@ -170,7 +171,13 @@ WEB_PORT=3000
 docker compose up -d --build
 ```
 
-App disponível em `http://localhost:3000`.
+Para testar no host, publique a porta manualmente:
+
+```bash
+docker compose run -d -p 3000:3000 --service-ports web
+```
+
+Ou crie um `docker-compose.override.yml` local com `ports: ["3000:3000"]` no serviço `web`.
 
 ### 3) Configurar no Coolify
 

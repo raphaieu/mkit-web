@@ -7,8 +7,8 @@ services:
         NUXT_PUBLIC_API_BASE: ${NUXT_PUBLIC_API_BASE:-https://api.mkit.com.br}
         NUXT_PUBLIC_APP_URL: ${NUXT_PUBLIC_APP_URL:-https://mkit.com.br}
     restart: unless-stopped
-    ports:
-      - "${WEB_PORT:-3000}:3000"
+    expose:
+      - "3000"
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
